@@ -1,0 +1,10 @@
+node_modules
+.vscode
+vscode
+.env
+package-lock.json
+index.html
+views
+uploads
+utils/fileUpload.js
+# .gitignore
