@@ -1,3 +1,19 @@
+const Chat = require('../models/chatModel');
+
+const saveChat = async (req, res) => {
+    try {
+        var chat = new Chat({
+            sender_id: req.body.sender_id,
+            reciever_id: req.body.reciever_id,
+            message: req.body.message
+        })
+        await chat.save()
+        res.status(200).send({ success: true, msg: 'Chat inserted' })
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message })
+    }
+}
+
 const createOrder = async (req, res) => {
     try {
         const Razorpay = require('razorpay');
@@ -63,4 +79,4 @@ async function checkPayment(req, res) {
     }
 }
 
-module.exports = { createOrder, checkPayment };
+module.exports = { createOrder, checkPayment, saveChat };

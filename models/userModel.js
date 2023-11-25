@@ -30,7 +30,6 @@ const userSchema = new mongoose.Schema(
             // maxlength: [20, "Password must be at most 20 characters long"],
             select: false,
         },
-
         forgotPasswordToken: {
             type: Number,
         },
@@ -38,7 +37,6 @@ const userSchema = new mongoose.Schema(
             type: Date,
             default: Date.now()   //15 minutes
         },
-
         signupToken: {
             type: String,
         },
@@ -50,17 +48,15 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
+        isOnline: {
+            type: Boolean,
+            default: false
+        },
 
-
-        // isOnline : {
-        //     type : Boolean,
-        //     default : false
-        // },
-
-        // image : {
-        //     type : String,
-        //     required : false
-        // },
+        image: {
+            type: String,
+            required: false
+        },
     },
     { timeStamps: true }
 );
