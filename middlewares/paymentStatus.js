@@ -1,23 +1,25 @@
 const User = require('../models/userModel');
 
 const paymentStatus = {
-    completed : (req, res, next)=>{
-        if(req.user.paymentStatus === true){
+    completed: (req, res, next) => {
+        if (req.user.paymentStatus === true) {
             next();
-        }else{
+        } else {
             res.status(400).json({
-                sender : "paymentMiddleware",
-                msg: "Payment status is not completed"});
+                sender: "paymentMiddleware",
+                msg: "Payment status is not completed"
+            });
         }
     },
 
-    notCompleted: (req, res, next)=>{
-        if(req.user.paymentStatus === false){
+    notCompleted: (req, res, next) => {
+        if (req.user.paymentStatus === false) {
             next();
-        }else{
+        } else {
             res.status(400).json({
-                sender : "paymentMiddleware",
-                msg: "Payment status is completed"});
+                sender: "paymentMiddleware",
+                msg: "Payment status is completed"
+            });
         }
     }
 }
