@@ -186,13 +186,13 @@ async function resetPassword(req,res){
     if(req.body.password !== req.body.confirmPassword){
         return res.status(400).json({status : "failed", message : "Password and confirm password does not match"});
     }
-    const pass = user.password;
-    const passwordCheck = user.checkPassword(pass);
+    // const pass = user.password;
+    const {password} = req.body;
+    const passwordCheck = await user.checkPassword(password);
     if(passwordCheck){
         return res.status(400).json({status : "failed", message : "New password and old password cannot be same"});
     }
 
-    const {password} = req.body;
     user.password = password;
     user.forgotPasswordToken = undefined;
     user.forgetPasswordExpire = undefined;
