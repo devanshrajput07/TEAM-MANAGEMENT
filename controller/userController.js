@@ -92,7 +92,7 @@ async function login(req,res){
         }
 
         const user = await User.findOne({email}).select("+password")
-        console.log(user)
+        // console.log(user)
         if(!user){
             return res.status(400).json({status : "failed", message : "Invalid credentials"});
         }
@@ -121,7 +121,7 @@ async function login(req,res){
         // console.log(`cookie token generated is ${cookieToken}`)
         // console.log(res.cookie)
         
-        return res.status(200).json({status : "success", message : "Logged in successfully"});
+        return res.status(200).json({status : "success", message : "Logged in successfully", user: user});
     }
     catch(err){
         console.log(err);
@@ -259,5 +259,25 @@ async function updatePassword(req,res){
     return res.status(200).json({status : "success", message : "Password updated successfully"});
 }
 
+async function darkMode(req,res){
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    user.darkMode = !user.darkMode;
+    await user.save();
+    return res.status(200).json({status : "success", message : "Dark mode updated successfully"});
+}
 
-module.exports = {signup, login, logout, sendResetPasswordEmail, resetPassword, updatePassword, signupVerification}
+async function addUserDetails(req,res){
+    const user = req.user;
+    const {experience, age, speciality, bio} = req.body;
+    user.experience = experience;
+    user.age = age;
+    user.speciality = speciality;
+    user.bio = bio;
+    await user.save();
+    return res.status(200).json({status : "success", message : "User details updated successfully"});
+}
+
+
+
+module.exports = {signup, login, logout, sendResetPasswordEmail, resetPassword, updatePassword, signupVerification, darkMode, addUserDetails}

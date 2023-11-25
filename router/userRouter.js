@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {signup, signupVerification, login, logout, sendResetPasswordEmail,resetPassword, updatePassword} = require("../controller/userController");
+const {signup, signupVerification, login, logout, sendResetPasswordEmail,resetPassword, updatePassword, darkMode, addUserDetails} = require("../controller/userController");
 const {isLoggedIn} = require("../middleware/userMiddleware");
 
 router.route("/signup")
@@ -24,6 +24,11 @@ router.route("/password/resetPassword")
 router.route("/password/updatePassword")
     .post(isLoggedIn, updatePassword)
 
+router.route("/darkMode")
+    .get(isLoggedIn, darkMode)
+
+router.route("/addUserDetails")
+    .post(isLoggedIn, addUserDetails)
 
 
 module.exports = router;

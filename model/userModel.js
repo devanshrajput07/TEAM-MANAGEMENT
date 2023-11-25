@@ -27,9 +27,9 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: [true, "Please enter your password"],
+            select: false,
             // minlength: [6, "Password must be at least 6 characters long"],
             // maxlength: [20, "Password must be at most 20 characters long"],
-            select: false,
         },
         
         forgotPasswordToken: {
@@ -52,7 +52,86 @@ const userSchema = new mongoose.Schema(
             default : false
         },
 
+        isPremium : {
+            type : Boolean,
+            default : false
+        },
+        
+        boards : [{
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "Board"
+        }],
 
+        experience : {
+            type : Number,
+            default : 0
+        },
+        
+        age : {
+            type : Number,
+            default : 0
+        },
+
+        speciality : {
+            type : String,
+            default : ""
+        },
+
+        bio :{
+            type : String,
+            default : ""
+        }
+
+        
+        // darkMode : {
+        //     type : Boolean,
+        //     default : false
+        // },
+
+        // cards : [{
+            //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Card"
+        // }],
+
+        // lists : [{
+            //     type : mongoose.Schema.Types.ObjectId,
+            //     ref : "List"
+            // }],
+
+            // checklists : [{
+                //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Checklist"
+        // }],
+
+        // labels : [{
+        //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Label"
+        // }],
+
+        // notifications : [{
+        //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Notification"
+        // }],
+        
+        // activities : [{
+            //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Activity"
+        // }],
+
+        // teams : [{
+        //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Team"
+        // }],
+        
+        // isVerified : {
+            //     type : Boolean,
+            //     default : false
+            // },
+
+            
+
+        
+        
         // isOnline : {
         //     type : Boolean,
         //     default : false
@@ -70,7 +149,7 @@ userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) {
         return next();
     }
-
+    
     this.password = await bcrypt.hash(this.password, 10);
 
     next();
