@@ -15,7 +15,7 @@ async function signup (req,res){
         }
 
         const existingUser = await User.findOne({email});
-        if(existingUser){
+        if(existingUser && existingUser.signupVerification){
             return res.status(400).json({status : "failed", message : "user already exists"})
         }
         
@@ -36,7 +36,7 @@ async function signup (req,res){
         setTimeout(async () => {
             await User.findOneAndDelete({signupVerification: false });
             console.log("User deleted");
-        }, 5 * 60 * 1000); // 5 minutes
+        }, 4 * 60 * 1000); // 4 minutes
 
         try{
             mailHelper(options)
@@ -58,8 +58,8 @@ async function signup (req,res){
 
         // await cookieToken(user,res);
         // return res.status(200).json({status : "success", message : "Account created successfully", user});
-    }catch(err){
-        console.log(err);
+    }catch(error){
+        console.log(error);
     }
 }
 
@@ -178,13 +178,18 @@ async function sendResetPasswordEmail(req,res){
 async function resetPassword(req,res){
     const token = req.body.token;
         
-    const user = await User.findOne({forgotPasswordToken : token, forgotPasswordExpire : {$gt : Date.now()}})
+    const user = await User.findOne({forgotPasswordToken : token, forgotPasswordExpire : {$gt : Date.now()}}).select("+password");
     if(!user){
         return res.status(400).json({status : "failed", message : "Invalid token or token expired"});
     }
 
     if(req.body.password !== req.body.confirmPassword){
         return res.status(400).json({status : "failed", message : "Password and confirm password does not match"});
+    }
+    const pass = user.password;
+    const passwordCheck = user.checkPassword(pass);
+    if(passwordCheck){
+        return res.status(400).json({status : "failed", message : "New password and old password cannot be same"});
     }
 
     const {password} = req.body;
@@ -195,7 +200,7 @@ async function resetPassword(req,res){
     
     cookieToken(user,res);
 
-    return res.status(400).json({status : "success", message : "Password reset successfully, you can go ahead"});
+    return res.status(200).json({status : "success", message : "Password reset successfully, you can go ahead"});
     
 }
 
@@ -281,3 +286,62 @@ async function addUserDetails(req,res){
 
 
 module.exports = {signup, login, logout, sendResetPasswordEmail, resetPassword, updatePassword, signupVerification, darkMode, addUserDetails}
+
+
+// const search = async (req, res,next) => {
+//     const query = req.query.q;
+//     try {
+//         const boards = await Board
+//             .aggregate([
+//                 {
+//                     $search: {
+//                         "index": "name",
+//                         "text": {
+//                           "path": "name",
+//                           "query": query,
+//                           "fuzzy": {}
+//                         }
+//                     }
+//                 }
+//             ])
+//             .exec();
+//         const lists = await List
+//             .aggregate([
+//                 {
+//                     $search: {
+//                         "index": "name",
+//                         "text": {
+//                           "path": "name",
+//                           "query": query,
+//                           "fuzzy": {}
+//                         }
+//                     }
+//                 },
+                
+//             ])
+//             .exec();
+  
+//         const cards = await Card
+//             .aggregate([
+//                 {
+//                     $search: {
+//                         "index": "name",
+//                         "text": {
+//                           "path": "name",
+//                           "query": query,
+//                           "fuzzy": {}
+//                         }
+//                     }
+//                 },
+//             ])
+//             .exec();
+//         res.json({
+//           success : true,
+//           data: {
+//             boards, lists, cards
+//           }
+//         });
+//     } catch (error) {
+//         next(error);
+//     }
+//   };
