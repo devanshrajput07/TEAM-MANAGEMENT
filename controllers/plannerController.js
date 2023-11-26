@@ -1,5 +1,5 @@
 const { User } = require('../models/userModel');
-const Planner = require('../models/planner'); 
+const Planner = require('../models/planner');
 const { createPlannerSchema, updatePlannerSchema } = require('../utils/joi_validations');
 
 const getPlannerByDate = async (req, res) => {
