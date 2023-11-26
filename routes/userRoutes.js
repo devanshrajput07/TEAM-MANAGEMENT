@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { signup, signupVerification, login, logout, sendResetPasswordEmail, resetPassword, updatePassword, darkMode, addUserDetails } = require("../controller/userController");
+const { signup, signupVerification, login, logout, sendResetPasswordEmail, resetPassword, updatePassword, darkMode, addUserDetails } = require("../controllers/userController");
 const { createOrder, checkPayment } = require("../controllers/userController");
 const paymentStatus = require("../middlewares/paymentStatus");
 
@@ -23,13 +23,13 @@ router.route("/password/resetPassword")
     .post(resetPassword)
 
 router.route("/password/updatePassword")
-    .post(isLoggedIn, updatePassword)
+    .post( updatePassword)
 
 router.route("/darkMode")
-    .get(isLoggedIn, darkMode)
+    .get( darkMode)
 
 router.route("/addUserDetails")
-    .post(isLoggedIn, addUserDetails)
+    .post( addUserDetails)
 
 
 /*
