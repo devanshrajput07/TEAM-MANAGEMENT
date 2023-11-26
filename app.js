@@ -5,6 +5,7 @@ const { PORT } = process.env || 8000;
 const server = app.listen(PORT, () => console.log(`💬 server on port ${PORT}`))
 const path = require('path')
 // const userRouter = require("./routes/userRoutes");
+const plannerRouter = require("./routes/plannerRoutes")
 
 const io = require('socket.io')(server)
 
@@ -36,3 +37,4 @@ function onConnected(socket) {
 }
 
 // app.use("/user", userRouter)
+app.use("/planner" , plannerRouter );
