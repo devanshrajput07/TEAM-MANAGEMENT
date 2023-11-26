@@ -5,7 +5,7 @@ const cookieToken = async (user,res,next)=>{
         // console.log(token)
         const options = {
             expiresIn : new Date(Date.now() + process.env.COOKIE_TIME),
-            httpOnly : true
+            httpOnly : false
         }
         // console.log("token", token);
         // console.log(`cookie token generated is ${token}`)
@@ -21,5 +21,3 @@ const cookieToken = async (user,res,next)=>{
 }
 
 module.exports = cookieToken;
-
-// TODO: everything fine here 
