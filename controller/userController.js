@@ -1,8 +1,8 @@
 const User = require('../model/userModel');
 const cookieToken = require('../utils/cookieToken');
 const {mailHelper} = require('../utils/emailHelper');
-const listModel = require('../model/listModel');
-const cardModel = require('../model/cardModel');
+// const listModel = require('../model/listModel');
+// const cardModel = require('../model/cardModel');
 const axios = require('axios');
 require("dotenv").config();
 const crypto = require("crypto");

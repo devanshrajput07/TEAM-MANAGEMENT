@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema(
         
         forgotPasswordToken: {
             type: Number,
+            default: undefined
         },
         forgotPasswordExpire: {
             type: Date,
@@ -62,6 +63,37 @@ const userSchema = new mongoose.Schema(
             ref : "Board"
         }],
 
+        // notifications : [{
+        //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Notification"
+        // }],
+        
+        cards : [{
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "Card"
+        }],
+        
+        lists : [{
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "List"
+        }],
+
+        // teams : [{
+        //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Team"
+        // }],
+        
+        // activities : [{
+        //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Activity"
+        // }],
+
+        gender : {
+            type : String,
+            enum: ['male', 'female', 'non-binary', 'prefer-not-to-say'],
+            default : "prefer-not-to-say"
+        },
+
         experience : {
             type : Number,
             default : 0
@@ -72,19 +104,34 @@ const userSchema = new mongoose.Schema(
             default : 0
         },
 
-        speciality : {
-            type : String,
-            default : ""
+        totalProjects : {
+            type : Number,
+            default : 0
         },
 
-        bio :{
-            type : String,
-            default : ""
-        }
+        languages : {
+           type : [String],
+            default : []
+        },
 
+        skills : {
+            type : [String],
+            default : []
+        },
+
+
+        // bio :{
+        //     type : String,
+        //     default : ""
+        // }
+        
+        // speciality : {
+        //     type : String,
+        //     default : ""
+        // },
         
         // darkMode : {
-        //     type : Boolean,
+            //     type : Boolean,
         //     default : false
         // },
 
@@ -157,8 +204,8 @@ userSchema.pre("save", async function (next) {
 
 
 userSchema.methods.checkPassword = async function (userSendPassword) {
-    //console.log(`this.password== ${this.password}`)         //TODO:
-    //console.log(`userSendPassword ${userSendPassword}`)     //TODO:
+    // console.log(`this.password== ${this.password}`)         //TODO:
+    // console.log(`userSendPassword ${userSendPassword}`)     //TODO:
     const flag =  await bcrypt.compare(userSendPassword, this.password);
     return flag
 };
@@ -198,3 +245,22 @@ userSchema.methods.generateSignupToken = async function (){
 }
 
 module.exports = mongoose.model("User", userSchema);
+
+// const createdAtStr = cards.createdAt;
+//     const createdDate = moment(createdAtStr);
+
+//     const timeAllottedDays = cards.daysAlloted;
+//     const currentTime = moment.utc();
+//     const timeDifference = currentTime.diff(createdDate, "days");
+
+//     if (timeDifference >= timeAllottedDays) {
+//       res.status(201).json({
+//         status: true,
+//         message: "Time has elapsed",
+//       });
+//     } else {
+//       res.status(201).json({
+//         status: true,
+//         message: "Time is still left",
+//       });
+//     } 

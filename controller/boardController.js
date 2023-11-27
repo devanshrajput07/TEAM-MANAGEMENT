@@ -4,26 +4,23 @@ require("dotenv").config();
 
 async function createBoard(req,res){
     try{
-        let {name, description, color} = req.body;
+        let {name, description} = req.body;
         
         if(!name || !description){
             return res.status(400).json({status : "failed", message : "All fields are required"});
         }
-        const user = req.user;              //TODO: check if this works         //working fine
+        const user = req.user;              
         // const user = await User.findById(req.user._id); 
         if(!user){
             return res.status(400).json({status : "failed", message : "User not found"});
         }
         let board;
-        if(!color){
-            board = await boardModel.create({name, description, owner : req.user});
-        }else {
-            board = await boardModel.create({name, description, color, owner : req.user});
-        }
+        board = await boardModel.create({name, description, owner : req.user});
         board.members.push(req.user._id);
         await board.save({validateBeforeSave : false});
         user.boards.push(board._id);
         await user.save({validateBeforeSave : false});
+        console.log(req.cookies.token)
         return res.status(200).json({status : "success", message : "Board created successfully", board});
     }catch(e){
         console.log(e);
@@ -47,7 +44,14 @@ async function getBoards(req,res){
 
 async function getBoard(req,res){               
     try{
-        const board = await boardModel.findById(req.params.id).populate("lists");
+        const board = await boardModel.findById(req.params.id).populate({
+            path : "lists",
+            populate : {
+                path : "cards"
+            },
+            path : "members",
+            select : "name email"
+        })
         // const board = await boardModel.findById(req.params.id).populate("owner members lists");         //TODO: check if this works
         if(!board){
             return res.status(400).json({status : "failed", message : "Board not found"});
@@ -78,7 +82,7 @@ async function updateBoard(req,res){
             flag = false;
         }
         if(!flag){
-            return res.status(400).json({status : "failed", message : "User not a member of this board"});
+            return res.status(400).json({status : "failed", message : "User not owner of this board"});
         }
         if(name){
             board.name = name;
@@ -222,7 +226,7 @@ async function removeMember(req,res){
             return res.status(400).json({status : "failed", message : "User not found, not logged in"});
         }
         if(board.owner.toString() !== loggedInUser._id.toString()){
-            return res.status(400).json({status : "failed", message : "Only owner can add members"});
+            return res.status(400).json({status : "failed", message : "Only owner can remove members"});
         }
         if(!board.members.includes(user._id)){
             return res.status(400).json({status : "failed", message : "User is not a member of this board"});

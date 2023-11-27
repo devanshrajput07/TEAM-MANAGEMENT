@@ -35,10 +35,10 @@ const boardSchema = new mongoose.Schema({
         ref : "Card"
     }],
 
-    color : {
-        type : String,
-        default : "#0079bf"
-    },
+    // color : {
+    //     type : String,
+    //     default : "#0079bf"
+    // },
 
     archived : {
         type : Boolean,
