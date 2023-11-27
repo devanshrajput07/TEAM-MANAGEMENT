@@ -10,6 +10,7 @@ const {
     unarchiveBoard,
     addMember,
     removeMember,
+    calendar
 } = require("../controller/boardController");
 const { isLoggedIn } = require("../middleware/userMiddleware");
 
@@ -22,5 +23,6 @@ router.route("/archiveBoard/:id/").get(isLoggedIn, archiveBoard);
 router.route("/unarchiveBoard/:id/").get(isLoggedIn, unarchiveBoard);
 router.route("/addMember/:id/").post(isLoggedIn, addMember);
 router.route("/removeMember/:id/").post(isLoggedIn, removeMember);
+router.route("/calendar/:id/").get(isLoggedIn, calendar);
 
 module.exports = router;

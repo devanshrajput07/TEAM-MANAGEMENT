@@ -1,5 +1,6 @@
 const boardModel = require('../model/boardModel');
 const User = require('../model/userModel');
+const cardModel = require('../model/cardModel');
 require("dotenv").config();
 
 async function createBoard(req,res){
@@ -240,6 +241,25 @@ async function removeMember(req,res){
     }
 }
 
+async function calendar(req, res) {
+    try {
+        const cards = await cardModel.find({ board: req.params.id });
+
+        const cardsData = cards.map((card) => ({
+            name: card.name,
+            completed : card.completed,
+            daysAlloted: card.daysAlloted,
+            createdAt: card.createdAt
+        }));
+        console.log(cardsData)
+
+        return res.status(200).json({ status: "success", cardsData });
+    } catch (e) {
+        console.log(e);
+        return res.status(400).json({ status: "failed", message: "Something went wrong" });
+    }
+}
+
 module.exports = {
     createBoard,
     getBoards,
@@ -249,7 +269,8 @@ module.exports = {
     archiveBoard,
     unarchiveBoard,
     addMember,
-    removeMember
-    
+    removeMember,
+    calendar
+
 }
 

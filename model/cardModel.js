@@ -42,8 +42,8 @@ const cardSchema = new mongoose.Schema({
         default : false
     },
 
-    dueDate : {
-        type : Date,
+    daysAlloted : {
+        type : Number,
         required : false
     },
 
@@ -52,10 +52,10 @@ const cardSchema = new mongoose.Schema({
         default : false
     },
 
-    completedAt : {
-        type : Date,
-        required : false
-    },
+    // completedAt : {
+    //     type : Date,
+    //     required : false
+    // },
 
     
 

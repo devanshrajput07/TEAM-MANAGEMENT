@@ -241,15 +241,15 @@ async function removeMember(req,res){
 
 async function addDueDate(req,res){
     try{
-        const {dueDate} = req.body;
-        if(!dueDate){
+        const {daysAlloted} = req.body;
+        if(!daysAlloted){
             return res.status(400).json({status : "failed", message : "All fields are required"});
         }
         const card = await cardModel.findById(req.params.id);
         if(!card){
             return res.status(400).json({status : "failed", message : "Card not found"});   
         }
-        card.dueDate = dueDate;
+        card.daysAlloted = daysAlloted;
         await card.save({validateBeforeSave : false});
         return res.status(200).json({status : "success", message : "Due date added successfully", card});   
     }catch(e){
@@ -264,7 +264,7 @@ async function removeDueDate(req,res){
         if(!card){
             return res.status(400).json({status : "failed", message : "Card not found"});   
         }
-        card.dueDate = undefined;
+        card.daysAlloted = undefined;
         await card.save({validateBeforeSave : false});
         return res.status(200).json({status : "success", message : "Due date removed successfully", card});   
     }catch(e){
