@@ -247,7 +247,7 @@ async function calendar(req, res) {
 
         const cardsData = cards.map((card) => ({
             name: card.name,
-            completed : card.completed,
+            completed : card.isCompleted,
             daysAlloted: card.daysAlloted,
             createdAt: card.createdAt
         }));

@@ -47,7 +47,7 @@ const cardSchema = new mongoose.Schema({
         required : false
     },
 
-    completed : {
+    isCompleted : {
         type : Boolean,
         default : false
     },

@@ -255,6 +255,10 @@ async function addDueDate(req,res){
         if(!card){
             return res.status(400).json({status : "failed", message : "Card not found"});   
         }
+        const board = await boardModel.findById(card.board._id);
+        if(board.members.includes(req.user._id) === false){
+            return res.status(400).json({status : "failed", message : "User not a member of this board"});
+        }
         card.daysAlloted = daysAlloted;
         await card.save({validateBeforeSave : false});
         return res.status(200).json({status : "success", message : "Due date added successfully", card});   
@@ -270,6 +274,10 @@ async function removeDueDate(req,res){
         if(!card){
             return res.status(400).json({status : "failed", message : "Card not found"});   
         }
+        const board = await boardModel.findById(card.board._id);
+        if(board.members.includes(req.user._id) === false){
+            return res.status(400).json({status : "failed", message : "User not a member of this board"});
+        }
         card.daysAlloted = undefined;
         await card.save({validateBeforeSave : false});
         return res.status(200).json({status : "success", message : "Due date removed successfully", card});   
@@ -279,6 +287,23 @@ async function removeDueDate(req,res){
     }
 }
 
+async function toggleMarkCardComplete(req,res){
+    try {
+        const card = await cardModel.findById(req.params.id);
+        if(!card){
+            return res.status(400).json({status : "failed", message : "Card not found"});   
+        }
+        const board = await boardModel.findById(card.board._id);
+        if(board.members.includes(req.user._id) === false){
+            return res.status(400).json({status : "failed", message : "User not a member of this board"});
+        }
+        card.isCompleted = !card.isCompleted;
+        await card.save({validateBeforeSave : false});
+        return res.status(200).json({status : "success", message : "Card completed status toggled successfully", card});
+    } catch (e) {
+        console.log(e)
+    }
+}
 
 
 module.exports = {
@@ -291,7 +316,8 @@ module.exports = {
     addMember,
     removeMember,
     addDueDate,
-    removeDueDate
+    removeDueDate,
+    toggleMarkCardComplete
 }
 
 
