@@ -35,14 +35,14 @@ app.use(cookieParser());
 
 //import routes
 const userRouter = require("./router/userRouter");
-const listRouter = require("./router/listRouter");
+// const listRouter = require("./router/listRouter");
 const boardRouter = require("./router/boardRouter");
-const cardRouter = require("./router/cardRouter");
+// const cardRouter = require("./router/cardRouter");
 //routes
 app.use("/api/user", userRouter);
 app.use("/api/board", boardRouter);
-app.use("/api/list", listRouter);
-app.use("/api/card", cardRouter);
+// app.use("/api/list", listRouter);
+// app.use("/api/card", cardRouter);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
