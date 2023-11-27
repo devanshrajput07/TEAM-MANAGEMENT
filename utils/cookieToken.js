@@ -1,17 +1,18 @@
 require("dotenv").config();
-const cookieToken = async (user,res,next)=>{
+const cookieToken = async (user,req, res,next)=>{
     try{
-        const token = await user.generateToken();
+        let token = await user.generateToken();
         // console.log(token)
         const options = {
             expiresIn : new Date(Date.now() + process.env.COOKIE_TIME),
             httpOnly : false
         }
-        // console.log("token", token);
-        // console.log(`cookie token generated is ${token}`)
+        
+        res.setHeader('Authorization', `Bearer ${token}`);
+        
         user.password = undefined;
-        // console.log("cookieToken", token);
-        // console.log("cookieToken sent");
+        user.token = token;
+        console.log("cookieToken", token);
         return res.cookie("token", token, options);
 
         // next()
