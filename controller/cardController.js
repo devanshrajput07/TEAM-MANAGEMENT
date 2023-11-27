@@ -245,6 +245,9 @@ async function addDueDate(req,res){
         if(!daysAlloted){
             return res.status(400).json({status : "failed", message : "All fields are required"});
         }
+        if(daysAlloted <= 0){
+            return res.status(400).json({status : "failed", message : "Days alloted cannot be negative or zero"});
+        }
         const card = await cardModel.findById(req.params.id);
         if(!card){
             return res.status(400).json({status : "failed", message : "Card not found"});   
