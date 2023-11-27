@@ -11,6 +11,7 @@ app.use(
     origin: "*",
     credentials: true,
     optionsSuccessStatus: 200,
+
   })
 );
 

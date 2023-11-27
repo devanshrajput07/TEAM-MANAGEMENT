@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 
 async function isLoggedIn(req, res, next) {
     try {
+        console.log("inside isLoggedIn");
+        console.log(res.headers);
         let token = req.cookies.token;
         console.log("cookie token line 7 ", token);
 
