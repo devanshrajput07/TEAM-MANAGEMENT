@@ -8,11 +8,11 @@ const plannerSchema = new Mongoose.Schema({
         type: String,
         default: ""
     },
-    UserId: {
-        type: Mongoose.Schema.Types.ObjectId,
-        ref: 'user',
-        required: true
-    }
+    // UserId: {
+    //     type: Mongoose.Schema.Types.ObjectId,
+    //     ref: 'user',
+    //     required: true
+    // }
 },
     {
         timestamps: true
