@@ -26,7 +26,7 @@ app.use(function (req,res,next){
   res.header("Access-Control-Allow-Credentials", true); 
   next();
 });
-
+app.use(cors({ origin: ['http://localhost:4000', 'https://teammanagement.onrender.com', 'http://teammanagement.onrender.com'], credentials: true }))
 
 //middlewares
 app.use(express.json());
