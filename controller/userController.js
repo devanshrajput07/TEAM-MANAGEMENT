@@ -6,13 +6,17 @@ const cardModel = require('../model/cardModel');
 const axios = require('axios');
 require("dotenv").config();
 const crypto = require("crypto");
-const {validateEmail, validatePassword} = require("../utils/regex");
+const {validName, validateEmail, validatePassword} = require("../utils/regex");
 async function signup (req,res){
     try{
         const {name, email, password} = req.body;
         if(!name || !email || !password){
             return res.status(400).json({status : "failed", message : "All fields are required"});
         }
+        if(!validName(name)){
+            return res.status(400).json({status : "failed", message : "Invalid name, provide a correct name, regex"});
+        }
+        
         if(!validateEmail(email)){
             return res.status(400).json({status : "failed", message : "Invalid email, provide a correct email"});
         }
@@ -151,6 +155,7 @@ async function logout(req,res){
         expires : new Date(Date.now()),
         httpOnly : true
     })
+    res.header('Authorization', null);
     res.status(200).json({succeess : true, message : "logout success"});
 }
 
@@ -331,9 +336,15 @@ async function addUserDetails(req,res){
     return res.status(200).json({status : "success", message : "User details updated successfully"});
 }
 
+async function getUserDetails(req,res){
+    const userId = req.params.id;
+    const user = await User.findById(userId)
+    return res.status(200).json({status : "success", message : "User details fetched successfully", "name" : user.name, "email" : user.email, "skill" : user.skills, "experience" : user.experience, });
+
+}
 
 
-module.exports = {signup, login, logout, sendResetPasswordEmail, resetPassword, updatePassword, signupVerification, darkMode, addUserDetails}
+module.exports = {signup, login, logout, sendResetPasswordEmail, resetPassword, updatePassword, signupVerification, darkMode, addUserDetails, getUserDetails}
 
 
 // const search = async (req, res,next) => {

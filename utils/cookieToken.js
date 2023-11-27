@@ -9,10 +9,10 @@ const cookieToken = async (user,req, res,next)=>{
         }
         
         res.setHeader('Authorization', `Bearer ${token}`);
-        
+
         user.password = undefined;
         user.token = token;
-        console.log("cookieToken", token);
+        // console.log("cookieToken", token);
         return res.cookie("token", token, options);
 
         // next()

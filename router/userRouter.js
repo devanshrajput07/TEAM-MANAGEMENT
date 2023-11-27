@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {signup, signupVerification, login, logout, sendResetPasswordEmail,resetPassword, updatePassword, darkMode, addUserDetails} = require("../controller/userController");
+const {signup, signupVerification, login, logout, sendResetPasswordEmail,resetPassword, updatePassword, darkMode, addUserDetails, getUserDetails} = require("../controller/userController");
 const {isLoggedIn} = require("../middleware/userMiddleware");
 
 router.route("/signup/")
@@ -33,6 +33,9 @@ router.route("/darkMode/")
 
 router.route("/addUserDetails/")
     .post(isLoggedIn, addUserDetails)
+
+router.route("/getUserDetails/:id")
+    .get(isLoggedIn, getUserDetails)
 
 
 module.exports = router;

@@ -245,6 +245,9 @@ async function addDueDate(req,res){
         if(!daysAlloted){
             return res.status(400).json({status : "failed", message : "All fields are required"});
         }
+        if(typeof daysAlloted !== "number"){
+            return res.status(400).json({status : "failed", message : "Days alloted should be a number"});
+        }
         if(daysAlloted <= 0){
             return res.status(400).json({status : "failed", message : "Days alloted cannot be negative or zero"});
         }
@@ -275,6 +278,24 @@ async function removeDueDate(req,res){
         return res.status(400).json({status : "failed", message : "Something went wrong"});       
     }
 }
+
+
+
+module.exports = {
+    createCard,
+    getCards,
+    updateCard,
+    deleteCard,
+    moveCard,
+    copyCard,
+    addMember,
+    removeMember,
+    addDueDate,
+    removeDueDate
+}
+
+
+
 
 // async function toggleArchiveCard(req,res){
 //     try{
@@ -404,21 +425,3 @@ async function removeDueDate(req,res){
 //         return res.status(400).json({status : "failed", message : "Something went wrong"});       
 //     }
 // }
-
-
-
-module.exports = {
-    createCard,
-    getCards,
-    updateCard,
-    deleteCard,
-    moveCard,
-    copyCard,
-    addMember,
-    removeMember,
-    addDueDate,
-    removeDueDate
-}
-
-
-

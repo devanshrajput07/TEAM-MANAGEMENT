@@ -63,10 +63,6 @@ const userSchema = new mongoose.Schema(
             ref : "Board"
         }],
 
-        // notifications : [{
-        //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Notification"
-        // }],
         
         cards : [{
             type : mongoose.Schema.Types.ObjectId,
@@ -78,46 +74,52 @@ const userSchema = new mongoose.Schema(
             ref : "List"
         }],
 
-        // teams : [{
-        //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Team"
-        // }],
-        
-        // activities : [{
-        //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Activity"
-        // }],
-
-        gender : {
-            type : String,
-            enum: ['male', 'female', 'non-binary', 'prefer-not-to-say'],
-            default : "prefer-not-to-say"
-        },
-
         experience : {
             type : Number,
             default : 0
         },
         
-        age : {
-            type : Number,
-            default : 0
-        },
-
-        totalProjects : {
-            type : Number,
-            default : 0
-        },
-
-        languages : {
-           type : [String],
-            default : []
-        },
-
         skills : {
             type : [String],
             default : []
         },
+        // teams : [{
+        //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Team"
+        // }],
+        
+        // notifications : [{
+        //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Notification"
+        // }],
+
+        // activities : [{
+        //     type : mongoose.Schema.Types.ObjectId,
+        //     ref : "Activity"
+        // }],
+
+        // gender : {
+        //     type : String,
+        //     enum: ['male', 'female', 'non-binary', 'prefer-not-to-say'],
+        //     default : "prefer-not-to-say"
+        // },
+
+        
+        // age : {
+        //     type : Number,
+        //     default : 0
+        // },
+
+        // totalProjects : {
+        //     type : Number,
+        //     default : 0
+        // },
+
+        // languages : {
+        //    type : [],
+        //     default : []
+        // },
+
 
 
         // bio :{
@@ -245,22 +247,3 @@ userSchema.methods.generateSignupToken = async function (){
 }
 
 module.exports = mongoose.model("User", userSchema);
-
-// const createdAtStr = cards.createdAt;
-//     const createdDate = moment(createdAtStr);
-
-//     const timeAllottedDays = cards.daysAlloted;
-//     const currentTime = moment.utc();
-//     const timeDifference = currentTime.diff(createdDate, "days");
-
-//     if (timeDifference >= timeAllottedDays) {
-//       res.status(201).json({
-//         status: true,
-//         message: "Time has elapsed",
-//       });
-//     } else {
-//       res.status(201).json({
-//         status: true,
-//         message: "Time is still left",
-//       });
-//     } 
