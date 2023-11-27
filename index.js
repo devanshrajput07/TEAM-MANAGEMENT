@@ -6,13 +6,13 @@ const { PORT } = process.env;
 require("./config/dbConnect").dbConnect();
 
 const cors = require("cors");
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-    optionsSuccessStatus: 200,
-  })
-);
+// app.use(
+//   cors({
+//     origin: "*",
+//     credentials: true,
+//     optionsSuccessStatus: 200,
+//   })
+// );
 
 // app.use(function (req,res,next){
 //   res.header("Access-Control-Allow-Origin","*");
@@ -26,7 +26,19 @@ app.use(
 //   res.header("Access-Control-Allow-Credentials", true); 
 //   next();
 // });
-app.use(cors({ origin: ['http://localhost:4000', 'https://teammanagement.onrender.com', 'http://teammanagement.onrender.com', 'https://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/', 'http://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/', 'http://localhost:5189'], credentials: true }))
+// app.use(cors({ origin: ['http://localhost:4000', 'https://teammanagement.onrender.com', 'http://teammanagement.onrender.com', 'https://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/', 'http://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/', 'http://localhost:5189'], credentials: true }))
+app.use(cors({
+  origin: [
+    'http://localhost:4000',
+    'https://teammanagement.onrender.com',
+    'http://teammanagement.onrender.com',
+    'https://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/',
+    'http://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/',
+    'http://localhost:5189'
+  ],
+  credentials: true
+}));
+
 
 //middlewares
 app.use(express.json());
