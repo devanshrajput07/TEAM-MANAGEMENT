@@ -1,19 +1,25 @@
 const User = require('../model/userModel');
 const cookieToken = require('../utils/cookieToken');
 const {mailHelper} = require('../utils/emailHelper');
+const listModel = require('../model/listModel');
+const cardModel = require('../model/cardModel');
 const axios = require('axios');
 require("dotenv").config();
 const crypto = require("crypto");
+const {validateEmail, validatePassword} = require("../utils/regex");
 async function signup (req,res){
     try{
         const {name, email, password} = req.body;
         if(!name || !email || !password){
             return res.status(400).json({status : "failed", message : "All fields are required"});
         }
-        if(password.length <6){
-            return res.status(400).json({status : "failed", message : "Password must be atleast 6 characters long"});
+        if(!validateEmail(email)){
+            return res.status(400).json({status : "failed", message : "Invalid email, provide a correct email"});
         }
-
+        if(!validatePassword(password)){
+            return res.status(400).json({status : "failed", message : "Password must be atleast 8 characters long, must contain 1 uppercase, 1 lowercase, 1 number and 1 special character"});
+        }
+        
         const existingUser = await User.findOne({email});
         if(existingUser && existingUser.signupVerification){
             return res.status(400).json({status : "failed", message : "user already exists"})
@@ -78,8 +84,9 @@ async function signupVerification(req,res){
         user.signupToken = undefined;
         user.signupTokenExpire = undefined;
         await user.save();
-        await cookieToken(user,res);
-        return res.status(200).json({status : "success", message : "Account activated successfully"})
+        await cookieToken(user,req,res);
+        return res.redirect("https://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/dashboard")
+        // return res.status(200).json({status : "success", message : "Account activated successfully"})
 }
 
 
@@ -90,8 +97,19 @@ async function login(req,res){
         if(!email || !password){
             return res.status(400).json({status : "failed", message : "All fields are required"});
         }
+        if(!validateEmail(email)){
+            return res.status(400).json({status : "failed", message : "Invalid email, provide a correct email"});
+        }
 
-        const user = await User.findOne({email}).select("+password")
+        const user = await User.findOne({email}).select("+password").populate({
+            path : "boards",
+            populate : {
+                path : "lists",
+                populate : {
+                    path : "cards"
+                },
+            }
+       })
         // console.log(user)
         if(!user){
             return res.status(400).json({status : "failed", message : "Invalid credentials"});
@@ -105,6 +123,7 @@ async function login(req,res){
             return res.status(400).json({status : "failed", message : "Email or password does not match"});
         }
         
+        await cookieToken(user,req, res);
         // const cookieToken =  (user,res)=>{
         //     const token = user.generateToken();
         //     const options = {
@@ -116,7 +135,6 @@ async function login(req,res){
 
         // }
 
-        await cookieToken(user,res);
         // console.log("msg from user controller below")
         // console.log(`cookie token generated is ${cookieToken}`)
         // console.log(res.cookie)
@@ -154,8 +172,8 @@ async function sendResetPasswordEmail(req,res){
     const forgotToken = await user.generateForgotPasswordToken();
     await user.save({validateBeforeSave : false});
 
-    
-    const message = `We received a request to reset your password.The OTP is\n ${forgotToken}`;
+    const myUrl = `${req.protocol}://${req.get("host")}/api/user/password/loginWithoutPassword/${forgotToken}`;
+    const message = `We received a request to reset your password.The OTP is\n ${forgotToken}\nTo login without password click the link below:\n ${myUrl}`;
     const options = {
         email : user.email,
         subject : "Reset Password",
@@ -175,6 +193,30 @@ async function sendResetPasswordEmail(req,res){
 
 }
 
+// async function loginWithoutPassword(req,res){
+//     const token = req.params.forgotToken;
+//     const user = await User.findOne({forgotPasswordToken : token, forgotPasswordExpire : {$gt : Date.now()}});
+//     if(!user){
+//         return res.status(400).json({status : "failed", message : "Invalid token or token expired"});
+//     }
+//     if(user && user.signupVerification === false){
+//         return res.status(400).json({status : "failed", message : "You are not a registered user"});
+//     }
+//     await cookieToken(user,res);
+//     user.forgotPasswordToken = undefined;
+//     user.forgotPasswordExpire = undefined;
+//     // await user.save();
+//     user.save()
+//     .then(() => {
+//         // User saved successfully
+//     })
+//     .catch((error) => {
+//         console.error(error);
+//     });
+//     return res.redirect("https://google.com/");
+//     // return res.status(200).json({status : "success", message : "Logged in successfully", user: user});
+// }
+
 async function resetPassword(req,res){
     const token = req.body.token;
         
@@ -182,9 +224,8 @@ async function resetPassword(req,res){
     if(!user){
         return res.status(400).json({status : "failed", message : "Invalid token or token expired"});
     }
-
-    if(req.body.password !== req.body.confirmPassword){
-        return res.status(400).json({status : "failed", message : "Password and confirm password does not match"});
+    if(!validatePassword(req.body.password)){
+        return res.status(400).json({status : "failed", message : "Password must be atleast 8 characters long, must contain 1 uppercase, 1 lowercase, 1 number and 1 special character"});
     }
     // const pass = user.password;
     const {password} = req.body;
@@ -195,7 +236,7 @@ async function resetPassword(req,res){
 
     user.password = password;
     user.forgotPasswordToken = undefined;
-    user.forgetPasswordExpire = undefined;
+    user.forgotPasswordExpire = undefined;
     await user.save();
     
     cookieToken(user,res);
@@ -211,6 +252,13 @@ async function updatePassword(req,res){
     
     if(!password || !newPassword || !confirmPassword){
         return res.status(400).json({status : "failed", message : "All fields are required"});
+    }
+
+    if(!validatePassword(req.body.password) && !validatePassword(req.body.confirmPassword)){
+        return res.status(400).json({status : "failed", message : "Password must be atleast 8 characters long, must contain 1 uppercase, 1 lowercase, 1 number and 1 special character"});
+    }
+    if(req.body.password !== req.body.confirmPassword){
+        return res.status(400).json({status : "failed", message : "Password and confirm password does not match"});
     }
     
     if(newPassword !== confirmPassword){
