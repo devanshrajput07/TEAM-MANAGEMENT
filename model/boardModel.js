@@ -35,15 +35,21 @@ const boardSchema = new mongoose.Schema({
         ref : "Card"
     }],
 
-    // color : {
-    //     type : String,
-    //     default : "#0079bf"
-    // },
+    chat : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Chat"
+    }],
 
     archived : {
         type : Boolean,
         default : false
     }
+    
+    // color : {
+    //     type : String,
+    //     default : "#0079bf"
+    // },
+
 
 }, { timestamps : true });
 

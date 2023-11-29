@@ -199,7 +199,7 @@ async function addMember(req,res){
             return res.status(400).json({status : "failed", message : "User already a member of this board"});
         }
         board.members.push(user._id);           //TODO: might await can be required.
-        user.boards.push(req.params.id);
+        user.boards.push(req.params.id);        
         await board.save();
         return res.status(200).json({status : "success", message : "Member added successfully", board});
     }catch(e){
@@ -259,6 +259,8 @@ async function calendar(req, res) {
         return res.status(400).json({ status: "failed", message: "Something went wrong" });
     }
 }
+
+
 
 module.exports = {
     createBoard,

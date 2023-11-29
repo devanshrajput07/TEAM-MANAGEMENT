@@ -1,11 +1,17 @@
 const express = require("express");
+const http = require("http");
 const app = express();
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const { PORT } = process.env;
 require("./config/dbConnect").dbConnect();
-
+const path = require("path");
 const cors = require("cors");
+const {Server} = require("socket.io");
+const server = http.createServer(app);
+const io = new Server(server);
+const { ObjectId } = require('mongodb');
+
 app.use(
   cors({
     origin: "*",
@@ -16,33 +22,9 @@ app.use(
   })
 );
 
-// app.use(function (req,res,next){
-//   res.header("Access-Control-Allow-Origin","*");
-//   res.header("Access-Control-Allow-Headers","Origin,X-Requested-With,Content-Type,Accept");
-//   res.header("Access-Control-Allow-Methods","GET,POST,PUT,DELETE");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-//   );
-//   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-//   res.header("Access-Control-Allow-Credentials", true); 
-//   next();
-// });
-// app.use(cors({ origin: ['http://localhost:4000', 'https://teammanagement.onrender.com', 'http://teammanagement.onrender.com', 'https://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/', 'http://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/', 'http://localhost:5189'], credentials: true }))
-// app.use(cors({
-//   origin: [
-//     'http://localhost:4000',
-//     'https://teammanagement.onrender.com',
-//     'http://teammanagement.onrender.com',
-//     'https://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/',
-//     'http://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/',
-//     'http://localhost:5189'
-//   ],
-//   credentials: true
-// }));
-
 
 //middlewares
+app.use(express.static(path.resolve("./public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -58,6 +40,34 @@ app.use("/api/board", boardRouter);
 app.use("/api/list", listRouter);
 app.use("/api/card", cardRouter);
 
-app.listen(PORT, () => {
+const User = require("./model/userModel");
+const Chat = require("./model/chatModel");
+io.on("connection", (socket) => {
+	console.log(socket.id);
+	socket.on("newMessage", async(messageText, incomingUserId) => {
+    let userId = new ObjectId(incomingUserId);
+    const user = await User.findById(userId);
+    const senderId = new ObjectId("655e5a3d67a8ae739ca6792b");
+    // const newMessage = await Chat.create({sender : req.user._id, reciever : userId, message : messageText, isIndividualChat : true});
+    const newMessage = await Chat.create({sender : senderId, reciever : userId, message : messageText, isIndividualChat : true});
+    user.chat.push(newMessage._id);
+    console.log(newMessage);
+    socket.broadcast.to(userId).emit("newMessage", message);
+  });
+
+});
+
+
+
+app.get("/", (req, res) => {
+	return res.sendFile("./public/index.html");
+});
+
+
+
+
+
+
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

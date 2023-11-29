@@ -74,6 +74,11 @@ const userSchema = new mongoose.Schema(
             ref : "List"
         }],
 
+        chat : [{
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "Chat"
+        }],
+
         experience : {
             type : Number,
             default : 0
