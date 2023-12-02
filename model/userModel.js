@@ -120,7 +120,7 @@ const userSchema = new mongoose.Schema(
             default : 0
         },
 
-        languages : {
+        language : {
            type : [],
             default : []
         },

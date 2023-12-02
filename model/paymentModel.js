@@ -16,10 +16,6 @@ const paymentSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-  },
-  paymentStatus: {
-    type: Boolean,
-    default: false,
   }
 });
 
