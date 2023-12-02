@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const secretKey = process.env.RAZORPAY_KEY_SECRET;
+const key_id = process.env.RAZORPAY_KEY_ID;
 
 export const checkout = async (req, res) => {
   try {
@@ -23,7 +24,7 @@ export const checkout = async (req, res) => {
       msg: 'Order Created',
       razorpay_order_id: order.id,
       amount: req.body.amount,
-      razorpay_payment_id: process.env.RAZORPAY_KEY_ID,
+      razorpay_payment_id: key_id,
       createdAt: Date.now(),
       order: order,
     });
