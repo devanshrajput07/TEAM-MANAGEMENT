@@ -37,8 +37,8 @@ router.route("/addUserDetails/")
 router.route("/getUserDetails/:id")
     .get(isLoggedIn, getUserDetails)
 
-router.route("/sendIndividualMessage/:id")
-    .post(isLoggedIn, sendIndividualMessage)
+// router.route("/sendIndividualMessage/:id")
+//     .post(isLoggedIn, sendIndividualMessage)
 
 
 module.exports = router;

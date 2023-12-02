@@ -260,7 +260,22 @@ async function calendar(req, res) {
     }
 }
 
-
+async function getAllMembers(){
+    try{
+        const board = await boardModel.findById(req.params.id);
+        if(!board){
+            return res.status(400).json({status : "failed", message : "Board not found"});
+        }
+        const flag = board.members.includes(req.user._id);
+        if(!flag){
+            return res.status(400).json({status : "failed", message : "User not a member of this board"});
+        }
+        return res.status(200).json({status : "success", message : "Board fetched successfully", board});
+    }catch(e){
+        console.log(e);
+        return res.status(400).json({status : "failed", message : "Something went wrong"});
+    }
+}
 
 module.exports = {
     createBoard,
@@ -272,7 +287,8 @@ module.exports = {
     unarchiveBoard,
     addMember,
     removeMember,
-    calendar
+    calendar,
+    getAllMembers
 
 }
 

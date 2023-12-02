@@ -41,7 +41,7 @@ app.use("/api/list", listRouter);
 app.use("/api/card", cardRouter);
 
 const User = require("./model/userModel");
-const Chat = require("./model/chatModel");
+const Chat = require("./model/chatsModel");
 io.on("connection", (socket) => {
 	console.log(socket.id);
 	socket.on("newMessage", async(messageText, incomingUserId) => {
