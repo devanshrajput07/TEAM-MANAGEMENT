@@ -7,10 +7,11 @@ const { PORT } = process.env;
 require("./config/dbConnect").dbConnect();
 const path = require("path");
 const cors = require("cors");
-const {Server} = require("socket.io");
+const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server);
 const { ObjectId } = require('mongodb');
+const axios = require("axios");
 
 app.use(
   cors({
@@ -42,16 +43,34 @@ app.use("/api/list", listRouter);
 app.use("/api/card", cardRouter);
 app.use("/api", paymentRouter);
 
+app.post('/sendToML', async (req, res) => {
+  try {
+    const { domain } = req.body;
+
+    // Call machine learning API
+    const mlApiResponse = await axios.post('https://erp.anaskhan.site/api/recommendation/', { domain });
+
+    // Process ML API response
+    const processedData = mlApiResponse.data;
+
+    // Send processed data back to frontend
+    res.json({ result: processedData });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 const User = require("./model/userModel");
 const Chat = require("./model/chatsModel");
 io.on("connection", (socket) => {
-	console.log(socket.id);
-	socket.on("newMessage", async(messageText, incomingUserId) => {
+  console.log(socket.id);
+  socket.on("newMessage", async (messageText, incomingUserId) => {
     let userId = new ObjectId(incomingUserId);
     const user = await User.findById(userId);
     const senderId = new ObjectId("655e5a3d67a8ae739ca6792b");
     // const newMessage = await Chat.create({sender : req.user._id, reciever : userId, message : messageText, isIndividualChat : true});
-    const newMessage = await Chat.create({sender : senderId, reciever : userId, message : messageText, isIndividualChat : true});
+    const newMessage = await Chat.create({ sender: senderId, reciever: userId, message: messageText, isIndividualChat: true });
     user.chat.push(newMessage._id);
     console.log(newMessage);
     socket.broadcast.to(userId).emit("newMessage", message);
@@ -62,7 +81,7 @@ io.on("connection", (socket) => {
 
 
 app.get("/", (req, res) => {
-	return res.sendFile("./public/index.html");
+  return res.sendFile("./public/index.html");
 });
 
 
@@ -71,5 +90,5 @@ app.get("/", (req, res) => {
 
 
 server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
