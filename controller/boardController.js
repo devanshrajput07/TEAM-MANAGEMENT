@@ -260,7 +260,7 @@ async function calendar(req, res) {
     }
 }
 
-async function getAllMembers(){
+async function getAllMembers(req, res){
     try{
         const board = await boardModel.findById(req.params.id);
         if(!board){
