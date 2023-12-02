@@ -327,11 +327,12 @@ async function darkMode(req,res){
 
 async function addUserDetails(req,res){
     const user = req.user;
-    const {experience, age, speciality, bio} = req.body;
+    const {skills, experience, totalProjects, language, gender} = req.body;
+    user.skills = skills;
     user.experience = experience;
-    user.age = age;
-    user.speciality = speciality;
-    user.bio = bio;
+    user.totalProjects = totalProjects;
+    user.language = language;
+    user.gender = gender;
     await user.save();
     return res.status(200).json({status : "success", message : "User details updated successfully"});
 }
