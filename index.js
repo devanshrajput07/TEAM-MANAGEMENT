@@ -34,11 +34,13 @@ const userRouter = require("./router/userRouter");
 const listRouter = require("./router/listRouter");
 const boardRouter = require("./router/boardRouter");
 const cardRouter = require("./router/cardRouter");
+const paymentRouter = require("./router/paymentRouter")
 //routes
 app.use("/api/user", userRouter);
 app.use("/api/board", boardRouter);
 app.use("/api/list", listRouter);
 app.use("/api/card", cardRouter);
+app.use("/api", paymentRouter);
 
 const User = require("./model/userModel");
 const Chat = require("./model/chatsModel");

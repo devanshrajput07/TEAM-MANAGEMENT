@@ -251,4 +251,11 @@ userSchema.methods.generateSignupToken = async function (){
     return signupToken;
 }
 
+userSchema.methods.markAsPremium = async function () {
+    this.isPremium = true;
+    this.subscriptionExpiresAt = new Date();
+    this.subscriptionExpiresAt.setDate(this.subscriptionExpiresAt.getDate() + 30 * 24 * 60 * 60 *1000); // 30 days
+    await this.save();
+  };
+
 module.exports = mongoose.model("User", userSchema);

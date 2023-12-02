@@ -1,7 +1,7 @@
 {
   "name": "chatapp",
   "version": "1.0.0",
-  "description": "",
+  "description": "In the dynamic landscape of collaborative work environments, effective team management is paramount for achieving organizational goals. The existing team management processes within our organization lack cohesion, resulting in challenges related to communication, collaboration, and overall productivity. To address these issues, we propose the development of a comprehensive Team Management System",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -28,6 +28,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.7",
     "nodemon": "^3.0.1",
+    "razorpay": "^2.9.2",
     "socket.io": "^4.7.2"
   }
 }
