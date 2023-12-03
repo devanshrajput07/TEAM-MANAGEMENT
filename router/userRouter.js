@@ -4,6 +4,7 @@ const {signup, signupVerification, login, logout, sendResetPasswordEmail,resetPa
 const {isLoggedIn} = require("../middleware/userMiddleware");
 const paymentStatus = require("../middleware/paymentStatus");
 const passport = require("../config/passportConfig");
+const {checkout, paymentVerification} = require("../controller/paymentController");
 
 router.route("/signup/")
     .post(signup);
@@ -42,8 +43,8 @@ router.route("/getUserDetails/:id")
 router.get("/gAuth/googleOAuth", passport.authenticate("google", { scope: ["profile", "email"] }));
 router.get("/gAuth/googleOAuth/callback", passport.authenticate("google", {failureRedirect: "/",}), (req, res, next) => { next();});
 // payments
-router.post("/createOrder/", isLoggedIn, paymentStatus.notCompleted ,createOrder)
-router.post("/checkPayment/", isLoggedIn, checkPayment)
+router.post("/createOrder/", isLoggedIn, paymentStatus.notCompleted ,checkout)
+router.post("/checkPayment/", isLoggedIn, paymentVerification)
 
 
 // router.route("/sendIndividualMessage/:id")

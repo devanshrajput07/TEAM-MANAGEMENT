@@ -65,7 +65,6 @@ const listRouter = require("./router/listRouter");
 const boardRouter = require("./router/boardRouter");
 const cardRouter = require("./router/cardRouter");
 const paymentRouter = require("./router/paymentRouter");
-const paymentRouter = require("./router/paymentRouter")
 //routes
 app.use("/api/user", userRouter);
 app.use("/api/board", boardRouter);
@@ -99,23 +98,24 @@ app.post('/sendToML', async (req, res) => {
   }
 });
 
-const User = require("./model/userModel");        
-const Chat = require("./model/chatsModel");
-io.on("connection", (socket) => {
-	console.log(socket.id);
-	socket.on("newMessage", async(messageText, incomingUserId) => {             //TODO: change userId to variable
-    let userId = new ObjectId(incomingUserId);
-    const user = await User.findById(userId);
-    const senderId = new ObjectId("655e5a3d67a8ae739ca6792b");
-    // const newMessage = await Chat.create({sender : req.user._id, reciever : userId, message : messageText, isIndividualChat : true});
-    const newMessage = await Chat.create({ sender: senderId, reciever: userId, message: messageText, isIndividualChat: true });
-    user.chat.push(newMessage._id);
-    console.log(newMessage);
-    socket.broadcast.to(userId).emit("newMessage", message);
-  });
+// const User = require("./model/userModel");        
+// const Chat = require("./model/chatsModel");
+const { initializeSocket } = require("./config/sockets");
+// io.on("connection", (socket) => {
+// 	console.log(socket.id);
+// 	socket.on("newMessage", async(messageText, incomingUserId) => {             //TODO: change userId to variable
+//     let userId = new ObjectId(incomingUserId);
+//     const user = await User.findById(userId);
+//     const senderId = new ObjectId("655e5a3d67a8ae739ca6792b");
+//     // const newMessage = await Chat.create({sender : req.user._id, reciever : userId, message : messageText, isIndividualChat : true});
+//     const newMessage = await Chat.create({ sender: senderId, reciever: userId, message: messageText, isIndividualChat: true });
+//     user.chat.push(newMessage._id);
+//     console.log(newMessage);
+//     socket.broadcast.to(userId).emit("newMessage", message);
+//   });
 
-});
-
+// });
+initializeSocket(server);
 app.post('/sendToML', async (req, res) => {
   try {
     const { domain } = req.body;
