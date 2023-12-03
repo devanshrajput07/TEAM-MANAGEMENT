@@ -15,6 +15,13 @@ async function createBoard(req,res){
         if(!user){
             return res.status(400).json({status : "failed", message : "User not found"});
         }
+        const exisitngBoards = user.boards;
+        if(exisitngBoards.length > 10 && !user.isPremium){
+            return res.status(400).json({status : "failed", message : "Maximum 10 boards allowed for a non premium user"});
+        }
+        if(exisitngBoards.length > 10 && user.susbcriptionExpiresAt < Date.now()){
+            return res.status(400).json({status : "failed", message : "Subscription expired, renew you subscription to create or join more boards"});
+        }
         let board;
         board = await boardModel.create({name, description, owner : req.user});
         board.members.push(req.user._id);

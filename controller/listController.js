@@ -32,7 +32,14 @@ async function createList(req,res){
 
 async function getLists(req,res){
     try{
-        const board = await boardModel.findById(req.params.id).populate("lists");       //TODO: populate cards
+        const board = await boardModel.findById(req.params.id).populate({
+                path: 'lists',
+                model: 'List',  
+                populate: {
+                path: 'cards',
+                model: 'Card'  
+            }
+        });
         if(!board){
             return res.status(400).json({status : "failed", message : "Board not found"});
         }

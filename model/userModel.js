@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            required: [true, "Please enter your password"],
+            // required: [true, "Please enter your password"],
             select: false,
             // minlength: [6, "Password must be at least 6 characters long"],
             // maxlength: [20, "Password must be at most 20 characters long"],
@@ -88,10 +88,17 @@ const userSchema = new mongoose.Schema(
             type : [String],
             default : []
         },
-        // teams : [{
-        //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Team"
-        // }],
+
+        profile_photo_url : {
+            type : String,
+            default : ""
+        },
+        
+        subscriptionExpiresAt : {
+            type : Date,
+            default : undefined
+        },
+        
         
         // notifications : [{
         //     type : mongoose.Schema.Types.ObjectId,
@@ -250,5 +257,13 @@ userSchema.methods.generateSignupToken = async function (){
     this.signupTokenExpire = Date.now()+5*60*1000;
     return signupToken;
 }
+
+userSchema.methods.markAsPremium = async function () {
+    this.isPremium = true;
+    this.subscriptionExpiresAt = new Date();
+    this.subscriptionExpiresAt.setDate(this.subscriptionExpiresAt.getDate() + 365 * 24 * 60 * 60 *1000); // 365 days
+    await this.save();
+  };
+
 
 module.exports = mongoose.model("User", userSchema);

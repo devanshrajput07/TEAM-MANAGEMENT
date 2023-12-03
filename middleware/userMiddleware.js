@@ -3,11 +3,11 @@ const jwt = require("jsonwebtoken");
 
 async function isLoggedIn(req, res, next) {
     try {
-        console.log("inside isLoggedIn");
-        console.log(res.headers);
+        if (req.isAuthenticated()) {
+            next();
+        }
+        
         let token = req.cookies.token;
-        console.log("cookie token line 7 ", token);
-
         if (!token) {
             const headerToken = req.headers.authorization || req.headers.Authorization;
             console.log("header token line 11 ", headerToken);
@@ -23,7 +23,7 @@ async function isLoggedIn(req, res, next) {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = await User.findById(decoded.id);
-
+        
         if (!req.user) {
             console.log("line 26 inside req.user")
             return res.status(401).json({ errorMessage: "Unauthorized, no user found" });
@@ -33,7 +33,6 @@ async function isLoggedIn(req, res, next) {
             return res.status(401).json({ errorMessage: "Unauthorized, please verify your email" });
         }
 
-        // If all checks pass, proceed to the next middleware or route handler
         next();
     } catch (e) {
         console.log(e);

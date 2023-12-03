@@ -128,20 +128,6 @@ async function login(req,res){
         }
         
         await cookieToken(user,req, res);
-        // const cookieToken =  (user,res)=>{
-        //     const token = user.generateToken();
-        //     const options = {
-        //         expiresIn : new Date(Date.now() + process.env.COOKIE_TIME),
-        //         httpOnly : true
-        //     }
-        //     res.cookie("token", token, options);
-        //     user.password = undefined;
-
-        // }
-
-        // console.log("msg from user controller below")
-        // console.log(`cookie token generated is ${cookieToken}`)
-        // console.log(res.cookie)
         
         return res.status(200).json({status : "success", message : "Logged in successfully", user: user});
     }
@@ -151,6 +137,11 @@ async function login(req,res){
 }
 
 async function logout(req,res){
+    if(req.isAuthenticated()){
+        req.logout();
+        res.status(200).json({succeess : true, message : "logout success"});
+    }
+    req.logout((err) => console.log(err));
     res.cookie("token", null, {
         expires : new Date(Date.now()),
         httpOnly : true
@@ -342,6 +333,7 @@ async function getUserDetails(req,res){
     return res.status(200).json({status : "success", message : "User details fetched successfully", "name" : user.name, "email" : user.email, "skill" : user.skills, "experience" : user.experience, });
 
 }
+
 
 
 module.exports = {signup, login, logout, sendResetPasswordEmail, resetPassword, updatePassword, signupVerification, darkMode, addUserDetails, getUserDetails}
