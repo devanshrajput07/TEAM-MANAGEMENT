@@ -1,7 +1,7 @@
 {
   "name": "chatapp",
   "version": "1.0.0",
-  "description": "",
+  "description": "In the dynamic landscape of collaborative work environments, effective team management is paramount for achieving organizational goals. The existing team management processes within our organization lack cohesion, resulting in challenges related to communication, collaboration, and overall productivity. To address these issues, we propose the development of a comprehensive Team Management System",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

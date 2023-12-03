@@ -110,11 +110,11 @@ const userSchema = new mongoose.Schema(
         //     ref : "Activity"
         // }],
 
-        // gender : {
-        //     type : String,
-        //     enum: ['male', 'female', 'non-binary', 'prefer-not-to-say'],
-        //     default : "prefer-not-to-say"
-        // },
+        gender : {
+            type : String,
+            enum: ['Male', 'Female', 'Non-binary', 'Prefer-not-to-say'],
+            default : "Prefer-not-to-say"
+        },
 
         
         // age : {
@@ -122,15 +122,15 @@ const userSchema = new mongoose.Schema(
         //     default : 0
         // },
 
-        // totalProjects : {
-        //     type : Number,
-        //     default : 0
-        // },
+        totalProjects : {
+            type : Number,
+            default : 0
+        },
 
-        // languages : {
-        //    type : [],
-        //     default : []
-        // },
+        language : {
+           type : [],
+            default : []
+        },
 
 
 
@@ -267,3 +267,4 @@ userSchema.methods.markAsPremium = async function () {
 
 
 module.exports = mongoose.model("User", userSchema);
+

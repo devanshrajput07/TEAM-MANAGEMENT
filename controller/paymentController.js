@@ -5,7 +5,8 @@ const Razorpay = require("razorpay");
 const dotenv = require('dotenv');
 dotenv.config();
 
-const secretKey = process.env.RAZORPAY_SECRET_KEY;
+
+const secretKey = process.env.RAZORPAY_KEY_SECRET;
 const key_id = process.env.RAZORPAY_KEY_ID;
 
 const checkout = async (req, res) => {
@@ -15,7 +16,7 @@ const checkout = async (req, res) => {
             key_secret: process.env.RAZORPAY_KEY_SECRET,
         });
         const options = {
-            amount: 3539*100,           //figma price
+            amount: 3539*100,           //figma design price
             currency: 'INR',
             partial_payment: false,
             payment_capture: 1,
@@ -23,16 +24,15 @@ const checkout = async (req, res) => {
 
         const order = await instance.orders.create(options);
 
-        return res.status(200).json({ success:true,
-            msg:'Order Created',
-            order_id:order.id,
-            // amount:amount,
-            key_id:RAZORPAY_KEY_ID,
-            name: req.user.name,       
-            email: req.user.email,                  
-            createdAt : Date.now(),
-            order: order
-        
+
+        return res.status(200).json({
+            success: true,
+            msg: 'Order Created',
+            razorpay_order_id: order.id,
+            amount: req.body.amount,
+            razorpay_payment_id: key_id,
+            createdAt: Date.now(),
+            order: order,
         });
     } catch (error) {
         console.error('Error creating order:', error);
