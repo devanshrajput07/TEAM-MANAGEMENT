@@ -25,6 +25,9 @@ async function signup (req,res){
         }
         
         const existingUser = await User.findOne({email});
+        if(existingUser && !existingUser.signupVerification){
+            return res.status(400).json({status : "failed", message : "user already exists, signup verification pending"});
+        }
         if(existingUser && existingUser.signupVerification){
             return res.status(400).json({status : "failed", message : "user already exists"})
         }
