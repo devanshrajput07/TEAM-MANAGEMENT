@@ -28,7 +28,7 @@ async function createBoard(req,res){
         await board.save({validateBeforeSave : false});
         user.boards.push(board._id);
         await user.save({validateBeforeSave : false});
-        console.log(req.cookies.token)
+        // console.log(req.cookies.token)
         return res.status(200).json({status : "success", message : "Board created successfully", board});
     }catch(e){
         console.log(e);

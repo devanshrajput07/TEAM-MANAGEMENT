@@ -1,6 +1,8 @@
 const { Server } = require('socket.io');
 const User = require('../model/userModel');
 const Chat = require('../model/chatsModel');
+const { ObjectId } = require('mongodb');
+const Board = require('../model/boardModel');
 
 async function initializeSocket(server) {
   const io = new Server(server, {
@@ -12,7 +14,7 @@ async function initializeSocket(server) {
     },
     connectionStateRecovery: {},
   });
-
+console.log("socket initialized")
   io.on('connection', async (socket) => {
     console.log('a user connected');
     const { userId } = socket.handshake.query;
@@ -20,8 +22,18 @@ async function initializeSocket(server) {
 
     socket.on('joinBoard', async (boardUserId) => {
       try {
-        const user = await User.findById(boardUserId).populate("boards");
-        user.boards.forEach(board => socket.join(board._id.toString()));
+        const tempUserId = new ObjectId(boardUserId);
+        const user = await User.findById(tempUserId).populate("boards");
+        if(!user) {
+          console.log("user not found");
+          return ;
+        }
+        user.boards.forEach(
+          board => {
+            socket.join(board._id.toString());
+            console.log(`user ${userId} joined board ${board._id}`);
+          }
+        );
         console.log("join board form server");
       } catch (error) {
         console.error(error);
@@ -30,16 +42,19 @@ async function initializeSocket(server) {
 
     socket.on('chatMessage', async (msg, boardId) => {
       try {
-        console.log(`msg is ${msg}`);
-        console.log(`socket id is ${socket.id}`);
-        console.log(`board id is ${boardId}`);
-        io.to(boardId).emit('chat message', msg);
+        const board = await Board.findById(boardId);
+        if (!board) {
+          console.log("board not found");
+          return;
+        }
+        io.to(boardId).emit('chat message', { senderId: userId, message: msg });
         const newChat = await Chat.create({
             senderId: userId,
             board: boardId,
             message: msg
             });
         console.log("newChat created is ", newChat);
+        socket.broadcast.to(boardId).emit("chat message", msg);
       } catch (error) {
         console.error(error);
       }

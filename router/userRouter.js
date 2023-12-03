@@ -40,8 +40,24 @@ router.route("/addUserDetails/")
 router.route("/getUserDetails/:id")
     .get(isLoggedIn, getUserDetails)
 
-router.get("/gAuth/googleOAuth", passport.authenticate("google", { scope: ["profile", "email"] }));
-router.get("/gAuth/googleOAuth/callback", passport.authenticate("google", {failureRedirect: "/",}), (req, res, next) => { next();});
+router.get("/googleOAuth", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get("/googleOAuth/callback", passport.authenticate("google", {failureRedirect: "/",}), 
+async (req, res, next) => {
+        console.log("inside callback, success");
+        const newUser = req.user;
+        let token = await newUser.generateToken();
+        const options = {
+            expiresIn : new Date(Date.now() + process.env.COOKIE_TIME),
+            httpOnly : false
+        }
+        res.setHeader('Authorization', `Bearer ${token}`);
+
+        newUser.password = undefined;
+        newUser.token = token;
+        res.cookie("token", token, options);
+        res.redirect("https://team-project1-b2j1-dhruv-sharmas-projects-a2e88115.vercel.app/dashboard");
+        next();
+    });
 // payments
 router.post("/createOrder/", isLoggedIn, paymentStatus.notCompleted ,checkout)
 router.post("/checkPayment/", isLoggedIn, paymentVerification)
