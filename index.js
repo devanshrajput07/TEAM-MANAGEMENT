@@ -47,6 +47,14 @@ app.post('/sendToML', async (req, res) => {
   try {
     const { domain } = req.body;
 
+    // Define the allowed values for the domain
+    const allowedDomains = /^(Frontend|Backend|ML|Design|App)$/i;
+
+    // Check if the domain matches the allowed pattern
+    if (!allowedDomains.test(domain)) {
+      return res.status(400).json({ error: 'Invalid domain value' });
+    }
+
     // Call machine learning API
     const mlApiResponse = await axios.post('https://erp.anaskhan.site/api/recommendation/', { domain });
 
