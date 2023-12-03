@@ -1,6 +1,7 @@
 const boardModel = require('../model/boardModel');
 const User = require('../model/userModel');
 const cardModel = require('../model/cardModel');
+const cloudinary = require('cloudinary').v2;
 require("dotenv").config();
 
 async function createBoard(req,res){
@@ -208,6 +209,7 @@ async function addMember(req,res){
         board.members.push(user._id);           //TODO: might await can be required.
         user.boards.push(req.params.id);        
         await board.save();
+        await user.save();
         return res.status(200).json({status : "success", message : "Member added successfully", board});
     }catch(e){
         console.log(e);
@@ -284,6 +286,28 @@ async function getAllMembers(req, res){
     }
 }
 
+async function uploadFile(req, res){
+    try{
+        const board = await boardModel.findById(req.params.id);
+        if(!board){
+            return res.status(400).json({status : "failed", message : "Board not found"});
+        }
+        const flag = board.members.includes(req.user._id);
+        if(!flag){
+            return res.status(400).json({status : "failed", message : "User not a member of this board"});
+        }
+        const fileFro = req.body.data;
+        const uploadResponse = await cloudinary.uploader.upload(fileFro, {
+            upload_preset : "trello-clone"
+        });
+        return res.status(200).json({status : "success", message : "File uploaded successfully", url : uploadResponse.url});
+    }catch(e){
+        console.log(e);
+        return res.status(400).json({status : "failed", message : "Something went wrong"})
+    }
+}
+
+
 module.exports = {
     createBoard,
     getBoards,
@@ -298,4 +322,8 @@ module.exports = {
     getAllMembers
 
 }
+
+
+
+
 
