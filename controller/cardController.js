@@ -312,12 +312,32 @@ async function toggleMarkCardComplete(req,res){
         }
         card.isCompleted = !card.isCompleted;
         await card.save({validateBeforeSave : false});
-        return res.status(200).json({status : "success", message : "Card completed status toggled successfully", card});
+        const cardStatus = card.isCompleted ? "completed" : "incomplete";
+        return res.status(200).json({status : "success", message : cardStatus, card});
     } catch (e) {
         console.log(e)
     }
 }
 
+async function toggleArchiveCard(req,res){
+    try{
+        const card = await cardModel.findById(req.params.id);
+        if(!card){
+            return res.status(400).json({status : "failed", message : "Card not found"});
+        }
+        const board = await boardModel.findById(card.board._id);
+        if(board.members.includes(req.user._id) === false){
+            return res.status(400).json({status : "failed", message : "User not a member of this board"});
+        }
+        card.isArchived = !card.isArchived;
+        await card.save({validateBeforeSave : false});
+        const cardStatus = card.isArchived ? "archived" : "unarchived";
+        return res.status(200).json({status : "success", message : cardStatus, card});
+    }catch(e){
+        console.log(e);
+        return res.status(400).json({status : "failed", message : "Something went wrong"});   
+    }
+}
 
 module.exports = {
     createCard,
@@ -330,137 +350,8 @@ module.exports = {
     removeMember,
     addDueDate,
     removeDueDate,
-    toggleMarkCardComplete
+    toggleMarkCardComplete,
+    toggleArchiveCard
 }
 
 
-
-
-// async function toggleArchiveCard(req,res){
-//     try{
-//         const card = await cardModel.findById(req.params.id);
-//         if(!card){
-//             return res.status(400).json({status : "failed", message : "Card not found"});
-//         }
-//         card.isArchived = !card.isArchived;
-//         await card.save({validateBeforeSave : false});
-//         return res.status(200).json({status : "success", message : "Card archived successfully", card});
-//     }catch(e){
-//         console.log(e);
-//         return res.status(400).json({status : "failed", message : "Something went wrong"});   
-//     }
-// }
-// async function createComment(req,res){
-//     try{
-//         const {text} = req.body;
-//         if(!text){
-//             return res.status(400).json({status : "failed", message : "All fields are required"});
-//         }
-//         const card = await cardModel.findById(req.params.id);
-//         if(!card){
-    //             return res.status(400).json({status : "failed", message : "Card not found"});
-//         }
-//         card.comments.push({text, user : req.user.id});
-//         await card.save({validateBeforeSave : false});
-//         return res.status(200).json({status : "success", message : "Comment added successfully", card});
-//     }catch(e){
-//         console.log(e);
-//         return res.status(400).json({status : "failed", message : "Something went wrong"});   
-//     }
-// }
-
-// async function updateComment(req,res){
-//     try{
-//         const {text} = req.body;
-//         if(!text){
-//             return res.status(400).json({status : "failed", message : "All fields are required"});
-//         }
-//         const card = await cardModel.findById(req.params.cardId);
-//         if(!card){
-//             return res.status(400).json({status : "failed", message : "Card not found"});
-//         }
-//         const comment = card.comments.find(comment => comment._id.toString() === req.params.commentId.toString());
-//         if(!comment){
-//             return res.status(400).json({status : "failed", message : "Comment not found"});
-//         }
-//         comment.text = text;
-//         await card.save({validateBeforeSave : false});
-//         return res.status(200).json({status : "success", message : "Comment updated successfully", card});
-//     }catch(e){
-//         console.log(e);
-//         return res.status(400).json({status : "failed", message : "Something went wrong"});   
-//     }
-// }
-
-// async function deleteComment(req,res){
-//     try{
-//         const card = await cardModel.findById(req.params.cardId);
-//         if(!card){
-//             return res.status(400).json({status : "failed", message : "Card not found"});
-//         }
-//         card.comments = card.comments.filter(comment => comment._id.toString() !== req.params.commentId.toString());
-//         await card.save({validateBeforeSave : false});
-//         return res.status(200).json({status : "success", message : "Comment deleted successfully", card});
-//     }catch(e){
-//         console.log(e);
-//         return res.status(400).json({status : "failed", message : "Something went wrong"});   
-//     }
-// }
-
-// async function createLabel(req,res){
-//     try{
-//         const {name, color} = req.body;
-//         if(!name || !color){
-//             return res.status(400).json({status : "failed", message : "All fields are required"});
-//         }
-//         const card = await cardModel.findById(req.params.id);
-//         if(!card){
-//             return res.status(400).json({status : "failed", message : "Card not found"});
-//         }
-//         card.labels.push({name, color});
-//         await card.save({validateBeforeSave : false});
-//         return res.status(200).json({status : "success", message : "Label added successfully", card});
-//     }catch(e){
-//         console.log(e);
-//         return res.status(400).json({status : "failed", message : "Something went wrong"});   
-//     }   
-// }
-
-// async function updateLabel(req,res){
-//     try{
-//         const {name, color} = req.body;
-//         if(!name || !color){
-//             return res.status(400).json({status : "failed", message : "All fields are required"});
-//         }
-//         const card = await cardModel.findById(req.params.cardId);
-//         if(!card){
-//             return res.status(400).json({status : "failed", message : "Card not found"});
-//         }
-//         const label = card.labels.find(label => label._id.toString() === req.params.labelId.toString());
-//         if(!label){
-//             return res.status(400).json({status : "failed", message : "Label not found"});
-//         }
-//         label.name = name;
-//         label.color = color;
-//         await card.save({validateBeforeSave : false});
-//         return res.status(200).json({status : "success", message : "Label updated successfully", card});   
-//     }catch(e){
-//         console.log(e);
-//         return res.status(400).json({status : "failed", message : "Something went wrong"});       
-//     }
-// }
-
-// async function deleteLabel(req,res){
-//     try{
-//         const card = await cardModel.findById(req.params.cardId);
-//         if(!card){
-//             return res.status(400).json({status : "failed", message : "Card not found"});
-//         }
-//         card.labels = card.labels.filter(label => label._id.toString() !== req.params.labelId.toString());
-//         await card.save({validateBeforeSave : false});
-//         return res.status(200).json({status : "success", message : "Label deleted successfully", card});   
-//     }catch(e){
-//         console.log(e);
-//         return res.status(400).json({status : "failed", message : "Something went wrong"});       
-//     }
-// }
