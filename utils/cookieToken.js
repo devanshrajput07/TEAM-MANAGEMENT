@@ -1,6 +1,10 @@
 require("dotenv").config();
 const cookieToken = async (user,req, res,next)=>{
     try{
+        if(!user) {
+            console.log("user not found");
+            return ;
+        }
         let token = await user.generateToken();
         // console.log(token)
         const options = {

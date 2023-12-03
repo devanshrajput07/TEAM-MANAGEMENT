@@ -1,6 +1,8 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../model/userModel");
+const cookieToken = require("../utils/cookieToken");
+const mongoose = require("mongoose");
 
 const googleAuthOptions = {
   clientID: process.env.GOOGLE_CLIENT_ID,
@@ -24,6 +26,9 @@ passport.use(new GoogleStrategy(googleAuthOptions, async (accessToken, refreshTo
         email: profile.emails[0].value,
         profile_photo_url: profile.photos[0].value
       });
+
+
+      
       done(null, newUser);
     }
   } catch (error) {
@@ -37,7 +42,9 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id);
+    const userId = new mongoose.Types.ObjectId(id);
+    const user = await User.findById(userId);
+    // await cookieToken(user, res);
 	done(null, user);
   } catch (error) {
     done(error, null);
