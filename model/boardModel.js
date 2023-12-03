@@ -43,7 +43,12 @@ const boardSchema = new mongoose.Schema({
     archived : {
         type : Boolean,
         default : false
-    }
+    },
+
+    attachments : [{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Attachment"
+    }],
     
     // color : {
     //     type : String,

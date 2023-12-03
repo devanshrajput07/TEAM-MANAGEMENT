@@ -51,7 +51,7 @@ console.log("socket initialized")
         const newChat = await Chat.create({
             senderId: userId,
             board: boardId,
-            message: msg
+            message: msg  
             });
         console.log("newChat created is ", newChat);
         socket.broadcast.to(boardId).emit("chat message", msg);
