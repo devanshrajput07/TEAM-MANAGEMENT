@@ -77,22 +77,26 @@ async function signup (req,res){
 }
 
 async function signupVerification(req,res){
-    const signupToken = req.params.signupToken;
-    const encyrptedToken = crypto
-        .createHash("sha256")
-        .update(signupToken)
-        .digest("hex");
-        const user = await User.findOne({signupToken : encyrptedToken, signupTokenExpire : {$gt : Date.now()}})
-        if(!user){
-            return res.status(400).json({status : "failed", message : "Invalid token or token expired"});
-        }
+    try {
+        const signupToken = req.params.signupToken;
+        const encyrptedToken = crypto
+            .createHash("sha256")
+            .update(signupToken)
+            .digest("hex");
+            const user = await User.findOne({signupToken : encyrptedToken, signupTokenExpire : {$gt : Date.now()}})
+            if(!user){
+                return res.status(400).json({status : "failed", message : "Invalid token or token expired"});
+            }
 
-        user.signupVerification = true;
-        user.signupToken = undefined;
-        user.signupTokenExpire = undefined;
-        await user.save();
-        await cookieToken(user,req,res);
-        return res.redirect("https://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/dashboard")
+            user.signupVerification = true;
+            user.signupToken = undefined;
+            user.signupTokenExpire = undefined;
+            await user.save();
+            await cookieToken(user,req,res);
+            return res.redirect("https://team-project-git-master-dhruv-sharmas-projects-a2e88115.vercel.app/dashboard")
+    } catch (error) {
+        return res.status(400).json({status : "failed", message : "Something went wrong while signup verification"});
+    }
         // return res.status(200).json({status : "success", message : "Account activated successfully"})
 }
 
