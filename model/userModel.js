@@ -98,6 +98,11 @@ const userSchema = new mongoose.Schema(
             type : Date,
             default : undefined
         },
+
+        attachments : [{
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "Attachment"
+        }],
         
         
         // notifications : [{

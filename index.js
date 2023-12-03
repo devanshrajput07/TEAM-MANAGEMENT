@@ -13,7 +13,8 @@ const io = new Server(server);
 const { ObjectId } = require('mongodb');
 const passport = require("./config/passportConfig");
 const axios = require("axios");
-
+const fileUpload = require("express-fileupload");
+const cloudinary = require("cloudinary").v2;
 app.use(
   cors({
     origin: "*",
@@ -58,6 +59,16 @@ app.use(express.static(path.resolve("./public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: "/tmp/"
+}));
+          
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET_KEY
+});
 
 //import routes
 const userRouter = require("./router/userRouter");
@@ -148,10 +159,49 @@ app.get("/", (req, res) => {
 });
 
 
+// app.post("/testImgUpload", async (req, res) =>{
+//   try{
+//       // const board = await boardModel.findById(req.params.id);
+//       // if(!board){
+//       //     return res.status(400).json({status : "failed", message : "Board not found"});
+//       // }
+//       // const flag = board.members.includes(req.user._id);
+//       // if(!flag){
+//       //     return res.status(400).json({status : "failed", message : "User not a member of this board"});
+//       // }
+//       let result;
+//       let imageArray = [];
+//       if(req.files){
+//           for(let i=0; i<req.files.sampleFile.length; i++){
+//               // let file = req.files.sampleFile[i].tempFilePath;
+//               result = await cloudinary.uploader.upload(req.files.sampleFile[i].tempFilePath, {
+//                   folder: "teemify",
+//               });
+//               imageArray.push({secure_url :result.secure_url, public_id : result.public_id});
+//           }
+//       }
+//       console.log(req.files);
+//       // let file = req.files.sampleFile;
+//       // let result = await cloudinary.uploader.upload(file.tempFilePath, {
+//       //     folder: "teemify",
+//       // });
+//       // console.log(result);
+//       // let attachment = await Attachment.create({board : req.params.id, user : req.user._id, secure_url : result.secure_url, public_id : result.public_id});
+//       // board.attachments.push(attachment._id);
+//       // await board.save();
+//       // req.user.attachments.push(attachment._id);
+//       // await req.user.save();
 
+//       return res.status(200).json({status : "success", message : "File uploaded successfully", imageArray : imageArray});
+//   }catch(e){
+//       console.log(e);
+//       return res.status(400).json({status : "failed", message : "Something went wrong"})
+//   }
+// });
 
 
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
