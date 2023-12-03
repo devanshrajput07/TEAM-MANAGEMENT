@@ -7,7 +7,7 @@ require("dotenv").config();
 
 async function createCard(req,res){
     try{
-        const {name, description, boardId, listId, position} = req.body;
+        const {name, description, boardId, listId, position, daysAlloted} = req.body;
         if(!name || !boardId || !listId || !position){
             return res.status(400).json({status : "failed", message : "All fields are required"});
         }
@@ -30,6 +30,19 @@ async function createCard(req,res){
         // }
         if(board.members.includes(req.user._id) === false){
             return res.status(400).json({status : "failed", message : "User not a member of this board"});
+        }
+        if(daysAlloted){
+            if(daysAlloted <= 0){
+                return res.status(400).json({status : "failed", message : "Days alloted cannot be negative or zero"});
+            }
+            if(typeof daysAlloted !== "number"){
+                return res.status(400).json({status : "failed", message : "Days alloted should be a number"});
+            }
+            const card = await cardModel.create({name, description, board : boardId, list : listId, position, daysAlloted});
+            board.cards.push(card._id);
+            list.cards.push(card._id);
+            await list.save({validateBeforeSave : false});
+            return res.status(200).json({status : "success", message : "Card created successfully", card});
         }
         const card = await cardModel.create({name, description, board : boardId, list : listId, position});
         board.cards.push(card._id);
