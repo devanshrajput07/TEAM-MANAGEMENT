@@ -79,16 +79,32 @@ const userSchema = new mongoose.Schema(
             ref : "Chat"
         }],
 
+        skills : {
+            type : [],
+            default : []
+        },
+
         experience : {
             type : Number,
             default : 0
         },
         
-        skills : {
-            type : [String],
+        totalProjects : {
+            type : Number,
+            default : 0
+        },
+        
+        language : {
+           type : [],
             default : []
         },
-
+        
+        gender : {
+            type : String,
+            enum: ['Male', 'Female', 'Non-binary', 'Prefer-not-to-say'],
+            default : "Prefer-not-to-say"
+        },
+        
         profile_photo_url : {
             type : String,
             default : ""
@@ -104,109 +120,17 @@ const userSchema = new mongoose.Schema(
             ref : "Attachment"
         }],
         
+        createdAt : {
+            type : Date,
+            default : Date.now()
+        },
+
         
         // notifications : [{
         //     type : mongoose.Schema.Types.ObjectId,
         //     ref : "Notification"
         // }],
 
-        // activities : [{
-        //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Activity"
-        // }],
-
-        gender : {
-            type : String,
-            enum: ['Male', 'Female', 'Non-binary', 'Prefer-not-to-say'],
-            default : "Prefer-not-to-say"
-        },
-
-        
-        // age : {
-        //     type : Number,
-        //     default : 0
-        // },
-
-        totalProjects : {
-            type : Number,
-            default : 0
-        },
-
-        language : {
-           type : [],
-            default : []
-        },
-
-
-
-        // bio :{
-        //     type : String,
-        //     default : ""
-        // }
-        
-        // speciality : {
-        //     type : String,
-        //     default : ""
-        // },
-        
-        // darkMode : {
-            //     type : Boolean,
-        //     default : false
-        // },
-
-        // cards : [{
-            //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Card"
-        // }],
-
-        // lists : [{
-            //     type : mongoose.Schema.Types.ObjectId,
-            //     ref : "List"
-            // }],
-
-            // checklists : [{
-                //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Checklist"
-        // }],
-
-        // labels : [{
-        //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Label"
-        // }],
-
-        // notifications : [{
-        //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Notification"
-        // }],
-        
-        // activities : [{
-            //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Activity"
-        // }],
-
-        // teams : [{
-        //     type : mongoose.Schema.Types.ObjectId,
-        //     ref : "Team"
-        // }],
-        
-        // isVerified : {
-            //     type : Boolean,
-            //     default : false
-            // },
-
-            
-
-        
-        
-        // isOnline : {
-        //     type : Boolean,
-        //     default : false
-        // },
-        
-        // image : {
-        //     type : String,
-        //     required : false
-        // },
     },
     { timeStamps: true }
 );
